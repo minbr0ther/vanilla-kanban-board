@@ -1,15 +1,18 @@
 const defaultState = [
   {
     id: 1,
-    items: [],
+    items: [{ id: 11111, content: "Edit Video" }],
   },
   {
     id: 2,
-    items: [],
+    items: [
+      { id: 22222, content: "Record Video" },
+      { id: 33333, content: "Change Video" },
+    ],
   },
   {
     id: 3,
-    items: [],
+    items: [{ id: 44444, content: "Save Video" }],
   },
 ];
 

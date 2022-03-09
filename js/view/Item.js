@@ -1,7 +1,10 @@
 import KanbanAPI from "../api/KanbanAPI.js";
+import DropZone from "./DropZone.js";
 
 export default class Item {
   constructor(id, content) {
+    const bottomDropZone = DropZone.createDropZone();
+
     this.elements = {};
     this.elements.root = Item.createRoot();
     this.elements.input = this.elements.root.querySelector(
@@ -11,6 +14,7 @@ export default class Item {
     this.elements.root.dataset.id = id;
     this.elements.input.textContent = content;
     this.content = content;
+    this.elements.root.appendChild(bottomDropZone);
 
     const onBlur = () => {
       // onBlur가 발생 시점의 textContent를 가져온다
@@ -34,6 +38,15 @@ export default class Item {
         this.elements.input.removeEventListener("blur", onBlur);
         this.elements.root.parentNode.removeChild(this.elements.root);
       }
+    });
+
+    this.elements.root.addEventListener("dragstart", (e) => {
+      // drop되는 곳에 id 추가
+      e.dataTransfer.setData("text/plain", id);
+    });
+
+    this.elements.input.addEventListener("drop", (e) => {
+      e.preventDefault();
     });
   }
 

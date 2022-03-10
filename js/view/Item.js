@@ -3,22 +3,19 @@ import DropZone from "./DropZone.js";
 
 export default class Item {
   constructor(id, content) {
-    const bottomDropZone = DropZone.createDropZone();
+    this.root = Item.createRoot();
+    this.input = this.root.querySelector(".kanban__item-input");
 
-    this.elements = {};
-    this.elements.root = Item.createRoot();
-    this.elements.input = this.elements.root.querySelector(
-      ".kanban__item-input"
-    );
-
-    this.elements.root.dataset.id = id;
-    this.elements.input.textContent = content;
+    this.root.dataset.id = id;
+    this.input.textContent = content;
     this.content = content;
-    this.elements.root.appendChild(bottomDropZone);
+
+    const bottomDropZone = new DropZone();
+    this.root.appendChild(bottomDropZone.$root);
 
     const onBlur = () => {
       // onBlur가 발생 시점의 textContent를 가져온다
-      const newContent = this.elements.input.textContent.trim();
+      const newContent = this.input.textContent.trim();
 
       if (this.content == newContent) return;
 
@@ -28,24 +25,24 @@ export default class Item {
       });
     };
 
-    this.elements.input.addEventListener("blur", onBlur);
-    this.elements.root.addEventListener("dblclick", () => {
+    this.input.addEventListener("blur", onBlur);
+    this.root.addEventListener("dblclick", () => {
       const check = confirm("정말 삭제 하시겠습니까?");
 
       if (check) {
         KanbanAPI.deleteItem(id);
 
-        this.elements.input.removeEventListener("blur", onBlur);
-        this.elements.root.parentNode.removeChild(this.elements.root);
+        this.input.removeEventListener("blur", onBlur);
+        this.root.parentNode.removeChild(this.root);
       }
     });
 
-    this.elements.root.addEventListener("dragstart", (e) => {
+    this.root.addEventListener("dragstart", (e) => {
       // drop되는 곳에 id 추가
       e.dataTransfer.setData("text/plain", id);
     });
 
-    this.elements.input.addEventListener("drop", (e) => {
+    this.input.addEventListener("drop", (e) => {
       e.preventDefault();
     });
   }

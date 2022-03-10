@@ -3,39 +3,34 @@ import DropZone from "./DropZone.js";
 import Item from "./Item.js";
 
 export default class Column {
-  constructor(id, title) {
-    const topDropZone = DropZone.createDropZone();
+  constructor(columnId, title) {
+    this.columnId = columnId;
+    this.title = title;
+    this.render();
+    this.manageEventListener();
+  }
 
-    this.elements = {};
-    this.elements.root = Column.createRoot();
-    this.elements.title = this.elements.root.querySelector(
-      ".kanban__column-title"
-    );
-    this.elements.items = this.elements.root.querySelector(
-      ".kanban__column-items"
-    );
-    this.elements.addItem =
-      this.elements.root.querySelector(".kanban__add-item");
+  render() {
+    this.$root = Column.createRoot();
+    this.$title = this.$root.querySelector(".kanban__column-title");
+    this.$items = this.$root.querySelector(".kanban__column-items");
+    this.$addItem = this.$root.querySelector(".kanban__add-item");
 
-    this.elements.root.dataset.id = id;
-    this.elements.title.textContent = title;
-    this.elements.items.appendChild(topDropZone);
+    this.$root.dataset.id = this.columnId;
+    this.$title.textContent = this.title;
 
-    this.elements.addItem.addEventListener("click", () => {
-      const newItem = KanbanAPI.insertItem(id, "");
+    // 상단 dropZone Render
+    const $topDropZone = new DropZone();
+    this.$items.appendChild($topDropZone.$root);
 
-      this.renderItem(newItem);
-    });
-
-    KanbanAPI.getItems(id).forEach((item) => {
+    // Items Render
+    KanbanAPI.getItems(this.columnId).forEach((item) => {
       this.renderItem(item);
     });
   }
 
   static createRoot() {
     const range = document.createRange();
-
-    // range.selectNode(document.body);
 
     return range.createContextualFragment(`
         <div class="kanban__column">
@@ -49,6 +44,14 @@ export default class Column {
   renderItem(data) {
     const item = new Item(data.id, data.content);
 
-    this.elements.items.appendChild(item.elements.root);
+    this.$items.appendChild(item.root);
+  }
+
+  manageEventListener() {
+    this.$addItem.addEventListener("click", () => {
+      const newItem = KanbanAPI.insertItem(this.columnId, "");
+
+      this.renderItem(newItem);
+    });
   }
 }

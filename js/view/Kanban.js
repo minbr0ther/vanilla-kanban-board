@@ -2,7 +2,7 @@ import Column from "./Column.js";
 
 export default class Kanban {
   constructor(root) {
-    this.root = root;
+    this.$root = root;
     this.render();
   }
 
@@ -27,7 +27,7 @@ export default class Kanban {
     Kanban.columns().forEach((column) => {
       const columnView = new Column(column.id, column.title);
 
-      this.root.append(columnView.elements.root);
+      this.$root.append(columnView.$root);
     });
   }
 }
